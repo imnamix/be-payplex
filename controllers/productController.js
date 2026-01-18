@@ -253,7 +253,7 @@ exports.updateProduct = async (req, res) => {
     const { productName, description, price, quantity, category, status, images } =
       req.body;
     const userId = req.user.userId;
-
+    const userRole = req.user.role;
     // Find product
     const product = await Product.findById(productId);
 
@@ -262,7 +262,7 @@ exports.updateProduct = async (req, res) => {
     }
 
     // Check if user is the seller
-    if (product.seller.toString() !== userId) {
+    if (product.seller.toString() !== userId && userRole !== "admin") {
       return res
         .status(403)
         .json({ message: "You are not authorized to update this product" });
@@ -312,6 +312,7 @@ exports.deleteProduct = async (req, res) => {
   try {
     const { productId } = req.params;
     const userId = req.user.userId;
+    const userRole = req.user.role;
 
     // Find product
     const product = await Product.findById(productId);
@@ -321,7 +322,7 @@ exports.deleteProduct = async (req, res) => {
     }
 
     // Check if user is the seller
-    if (product.seller.toString() !== userId) {
+    if (product.seller.toString() !== userId && userRole !== "admin") {
       return res
         .status(403)
         .json({ message: "You are not authorized to delete this product" });
